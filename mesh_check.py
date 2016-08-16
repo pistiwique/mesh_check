@@ -1,3 +1,24 @@
+'''
+mesh_check.py
+Draw ngons and triangles with bgl - using bmesh in edit mode
+Copyright (C) 2016 Pistiwique
+Created by Pistiwique
+
+The code is based on 3dview_border_lines_bmesh_edition.py
+Copyright (C) 2015 Quentin Wenger
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
+
 import bpy
 from bgl import glBegin, glLineWidth, glColor3f, glColor4f, glVertex3f, glEnd, GL_LINES, glEnable, glDisable, GL_DEPTH_TEST, GL_BLEND, GL_POLYGON
 from mathutils.geometry import tessellate_polygon as tessellate
