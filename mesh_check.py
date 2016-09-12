@@ -187,9 +187,18 @@ def mesh_check_draw_callback():
                     glColor4f(0.0, 0.0, 0.0, 1.0)
  
  
- 
+
+def is_isolated():
+    obj = bpy.context.active_object
+    mesh = obj.data
+    bm = bmesh.from_edit_mesh(mesh)
+    
+    isolated = [v for v in bm.verts if not v.link_edges]
+    
+    return isolated
+
 def updateBGLData(self, context):
-    if self.mesh_check_use and self.display_faces:
+    if self.mesh_check_use:
         bpy.ops.object.mode_set(mode='EDIT')
         draw_enabled[0] = True
         edge_width[0] = self.edge_width
@@ -212,7 +221,14 @@ def updateBGLData(self, context):
                     self.custom_ngons_color[1],
                     self.custom_ngons_color[2],
                     self.face_opacity)
- 
+        
+        if is_isolated():
+            select_mode = tuple(bpy.context.tool_settings.mesh_select_mode)
+            bpy.context.tool_settings.mesh_select_mode=(True, False, False)
+            bpy.ops.mesh.select_loose()
+            bpy.ops.mesh.delete(type = 'VERT')
+            bpy.context.tool_settings.mesh_select_mode = select_mode
+            
         return
     
     draw_enabled[0] = False
@@ -234,15 +250,14 @@ class FaceTypeSelect(bpy.types.Operator):
         return context.active_object is not None and context.active_object.type == 'MESH'
  
     def execute(self, context):
-        bpy.ops.object.mode_set(mode='EDIT')
         bpy.ops.mesh.select_all(action='DESELECT')
-        context.tool_settings.mesh_select_mode=(False, False, True)
         
         if self.face_type == "tris":
             bpy.ops.mesh.select_face_by_sides(number=3, type='EQUAL')
+            context.tool_settings.mesh_select_mode=(False, False, True)
         else:
             bpy.ops.mesh.select_face_by_sides(number=4, type='GREATER')
- 
+            
         return {'FINISHED'}
  
  
@@ -255,9 +270,8 @@ class MeshCheckCollectionGroup(bpy.types.PropertyGroup):
         )
         
     
-    display_faces = bpy.props.BoolProperty(
-        name="Display Faces",
-        description="Use BGL to display ngons en tris of the mesh",
+    display_options = bpy.props.BoolProperty(
+        name="Options",
         default=False,
         update=updateBGLData           
         )
@@ -327,8 +341,8 @@ def displayMeshCheckPanel(self, context):
         row.operator("object.face_type_select", text="Ngons",icon_value=ngons.icon_id).face_type = 'ngons'
         split = layout.split(percentage=0.1)
         split.separator()
-        split.prop(mesh_check, "display_faces", text="Display Faces")
-        if mesh_check.display_faces:
+        split.prop(mesh_check, "display_options", text="Options")
+        if mesh_check.display_options:
             split = layout.split(percentage=0.1)
             split.separator()
             split2 = split.split()
