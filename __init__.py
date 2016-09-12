@@ -58,7 +58,7 @@ def register():
     bpy.utils.register_module(__name__)
     bpy.types.WindowManager.mesh_check = bpy.props.PointerProperty(
         type=MeshCheckCollectionGroup)
-    bpy.types.VIEW3D_PT_view3d_shading.append(displayMeshCheckPanel)
+    bpy.types.VIEW3D_PT_view3d_meshdisplay.prepend(displayMeshCheckPanel)
     if mesh_check_handle:
         bpy.types.SpaceView3D.draw_handler_remove(mesh_check_handle[0], 'WINDOW')
     mesh_check_handle[:] = [bpy.types.SpaceView3D.draw_handler_add(mesh_check_draw_callback, (), 'WINDOW', 'POST_VIEW')]
@@ -70,7 +70,7 @@ def unregister():
 
     print("Unregistered {}".format(bl_info["name"]))
     
-    bpy.types.VIEW3D_PT_view3d_shading.remove(displayMeshCheckPanel)
+    bpy.types.VIEW3D_PT_view3d_meshdisplay.remove(displayMeshCheckPanel)
     del bpy.types.WindowManager.mesh_check
     if mesh_check_handle:
         bpy.types.SpaceView3D.draw_handler_remove(mesh_check_handle[0], 'WINDOW')
