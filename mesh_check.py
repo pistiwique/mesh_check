@@ -42,9 +42,18 @@ def draw_poly(points):
     for i in range(len(points)):
         glVertex3f(points[i][0], points[i][1], points[i][2])
  
- 
+def get_offset(obj):
+    if obj.modifiers:
+        for mod in obj.modifiers:
+            if mod.type == 'SHRINKWRAP':
+                return 0.001 + obj.modifiers[mod.name].offset
+    
+    return 0.001
+        
+        
 def mesh_check_draw_callback():
     obj = bpy.context.object
+            
     if obj and obj.type == 'MESH':
         if draw_enabled[0]:
             mesh = obj.data
@@ -99,9 +108,9 @@ def mesh_check_draw_callback():
                                 new_faces.append([indices[i] for i in pol])
      
                             for f in new_faces:
-                                faces.append([((matrix_world*bm.verts[i].co)[0]+face.normal.x*0.001,
-                                               (matrix_world*bm.verts[i].co)[1]+face.normal.y*0.001,
-                                               (matrix_world*bm.verts[i].co)[2]+face.normal.z*0.001)
+                                faces.append([((matrix_world*bm.verts[i].co)[0]+face.normal.x*get_offset(obj),
+                                               (matrix_world*bm.verts[i].co)[1]+face.normal.y*get_offset(obj),
+                                               (matrix_world*bm.verts[i].co)[2]+face.normal.z*get_offset(obj))
                                                for i in f])
      
                             for f in faces:
@@ -131,7 +140,10 @@ def mesh_check_draw_callback():
                             faces = []
                             for vert in face.verts:
                                 vert_face = matrix_world*vert.co
-                                faces.append((vert_face[0]+face.normal.x*0.001, vert_face[1]+face.normal.y*0.001, vert_face[2]+face.normal.z*0.001))
+                                faces.append((vert_face[0]+face.normal.x*get_offset(obj),
+                                              vert_face[1]+face.normal.y*get_offset(obj),
+                                              vert_face[2]+face.normal.z*get_offset(obj))
+                                              )
  
                             glColor4f(*faces_tri_color[0])
                             glEnable(GL_BLEND)
@@ -144,7 +156,10 @@ def mesh_check_draw_callback():
                                     edges = []
                                     for vert in edge.verts:
                                         vert_edge = matrix_world*vert.co
-                                        edges.append((vert_edge[0]+face.normal.x*0.001, vert_edge[1]+face.normal.y*0.001, vert_edge[2]+face.normal.z*0.001))
+                                        edges.append((vert_edge[0]+face.normal.x*get_offset(obj),
+                                                      vert_edge[1]+face.normal.y*get_offset(obj),
+                                                      vert_edge[2]+face.normal.z*get_offset(obj))
+                                                      )
                                     glColor4f(*edges_tri_color[0])
                                     glBegin(GL_LINES)
                                     draw_poly(edges)
@@ -159,9 +174,9 @@ def mesh_check_draw_callback():
                                 new_faces.append([indices[i] for i in pol])
                                    
                             for f in new_faces:
-                                faces.append([((matrix_world*bm.verts[i].co)[0]+face.normal.x*0.001,
-                                               (matrix_world*bm.verts[i].co)[1]+face.normal.y*0.001,
-                                               (matrix_world*bm.verts[i].co)[2]+face.normal.z*0.001)
+                                faces.append([((matrix_world*bm.verts[i].co)[0]+face.normal.x*get_offset(obj),
+                                               (matrix_world*bm.verts[i].co)[1]+face.normal.y*get_offset(obj),
+                                               (matrix_world*bm.verts[i].co)[2]+face.normal.z*get_offset(obj))
                                                 for i in f])
 
                             for f in faces:
@@ -176,7 +191,10 @@ def mesh_check_draw_callback():
                                     edges = []
                                     for vert in edge.verts:
                                         vert_edge = matrix_world*vert.co
-                                        edges.append((vert_edge[0]+face.normal.x*0.001, vert_edge[1]+face.normal.y*0.001, vert_edge[2]+face.normal.z*0.001))
+                                        edges.append((vert_edge[0]+face.normal.x*get_offset(obj),
+                                                      vert_edge[1]+face.normal.y*get_offset(obj),
+                                                      vert_edge[2]+face.normal.z*get_offset(obj))
+                                                      )
                                     glColor4f(*edges_ngons_color[0])
                                     glBegin(GL_LINES)
                                     draw_poly(edges)
