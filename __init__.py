@@ -24,7 +24,7 @@ bl_info = {"name": "Mesh Check BGL edition",
         "author": "Pistiwique",
         "version": (1, 0, 0),
         "blender": (2, 75, 0),
-        "location": "3D View(s) -> Properties -> Shading",
+        "location": "Panel N -> Mesh display",
         "category": "3D View"
         }
 
