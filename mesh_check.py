@@ -131,94 +131,95 @@ def mesh_check_draw_callback():
                                        options[1])
 
                 for face in bm.faces:
-                    verts_count = len([verts for verts in face.verts])
-                    if prefs.display_tris and verts_count == 3:
-                        faces = []
-                        for vert in face.verts:
-                            vert_face = matrix_world * vert.co
-                            faces.append((vert_face[
-                                              0] + face.normal.x * get_offset(
-                                obj),
-                                          vert_face[
-                                              1] + face.normal.y * get_offset(
-                                              obj),
-                                          vert_face[
-                                              2] + face.normal.z * get_offset(
-                                              obj))
-                                         )
+                    if not face.hide:
+                        verts_count = len([verts for verts in face.verts])
+                        if prefs.display_tris and verts_count == 3:
+                            faces = []
+                            for vert in face.verts:
+                                vert_face = matrix_world * vert.co
+                                faces.append((vert_face[
+                                                  0] + face.normal.x * get_offset(
+                                    obj),
+                                              vert_face[
+                                                  1] + face.normal.y * get_offset(
+                                                  obj),
+                                              vert_face[
+                                                  2] + face.normal.z * get_offset(
+                                                  obj))
+                                             )
 
-                        glColor4f(*prefs.tri_color)
-                        glEnable(GL_BLEND)
-                        glBegin(GL_POLYGON)
-                        draw_poly(faces)
-                        glEnd()
-
-                        for edge in face.edges:
-                            if edge.is_valid:
-                                edges = []
-                                for vert in edge.verts:
-                                    vert_edge = matrix_world * vert.co
-                                    edges.append((vert_edge[
-                                                      0] + face.normal.x * get_offset(
-                                        obj),
-                                                  vert_edge[
-                                                      1] + face.normal.y * get_offset(
-                                                      obj),
-                                                  vert_edge[
-                                                      2] + face.normal.z * get_offset(
-                                                      obj))
-                                                 )
-                                glColor3f(*prefs.tri_color[:3])
-                                glBegin(GL_LINES)
-                                draw_poly(edges)
-                                glEnd()
-
-                    if prefs.display_ngons and verts_count > 4:
-                        new_faces = []
-                        faces = []
-                        coords = [v.co for v in face.verts]
-                        indices = [v.index for v in face.verts]
-                        for pol in tessellate([coords]):
-                            new_faces.append([indices[i] for i in pol])
-
-                        for f in new_faces:
-                            faces.append([((matrix_world * bm.verts[i].co)[
-                                               0] + face.normal.x * get_offset(
-                                obj),
-                                           (matrix_world * bm.verts[i].co)[
-                                               1] + face.normal.y * get_offset(
-                                               obj),
-                                           (matrix_world * bm.verts[i].co)[
-                                               2] + face.normal.z * get_offset(
-                                               obj))
-                                          for i in f])
-
-                        for f in faces:
-                            glColor4f(*prefs.ngons_color)
+                            glColor4f(*prefs.tri_color)
                             glEnable(GL_BLEND)
                             glBegin(GL_POLYGON)
-                            draw_poly(f)
+                            draw_poly(faces)
                             glEnd()
 
-                        for edge in face.edges:
-                            if edge.is_valid:
-                                edges = []
-                                for vert in edge.verts:
-                                    vert_edge = matrix_world * vert.co
-                                    edges.append((vert_edge[
-                                                      0] + face.normal.x * get_offset(
-                                        obj),
-                                                  vert_edge[
-                                                      1] + face.normal.y * get_offset(
-                                                      obj),
-                                                  vert_edge[
-                                                      2] + face.normal.z * get_offset(
-                                                      obj))
-                                                 )
-                                glColor3f(*prefs.ngons_color[:3])
-                                glBegin(GL_LINES)
-                                draw_poly(edges)
+                            for edge in face.edges:
+                                if edge.is_valid:
+                                    edges = []
+                                    for vert in edge.verts:
+                                        vert_edge = matrix_world * vert.co
+                                        edges.append((vert_edge[
+                                                          0] + face.normal.x * get_offset(
+                                            obj),
+                                                      vert_edge[
+                                                          1] + face.normal.y * get_offset(
+                                                          obj),
+                                                      vert_edge[
+                                                          2] + face.normal.z * get_offset(
+                                                          obj))
+                                                     )
+                                    glColor3f(*prefs.tri_color[:3])
+                                    glBegin(GL_LINES)
+                                    draw_poly(edges)
+                                    glEnd()
+
+                        if prefs.display_ngons and verts_count > 4:
+                            new_faces = []
+                            faces = []
+                            coords = [v.co for v in face.verts]
+                            indices = [v.index for v in face.verts]
+                            for pol in tessellate([coords]):
+                                new_faces.append([indices[i] for i in pol])
+
+                            for f in new_faces:
+                                faces.append([((matrix_world * bm.verts[i].co)[
+                                                   0] + face.normal.x * get_offset(
+                                    obj),
+                                               (matrix_world * bm.verts[i].co)[
+                                                   1] + face.normal.y * get_offset(
+                                                   obj),
+                                               (matrix_world * bm.verts[i].co)[
+                                                   2] + face.normal.z * get_offset(
+                                                   obj))
+                                              for i in f])
+
+                            for f in faces:
+                                glColor4f(*prefs.ngons_color)
+                                glEnable(GL_BLEND)
+                                glBegin(GL_POLYGON)
+                                draw_poly(f)
                                 glEnd()
+
+                            for edge in face.edges:
+                                if edge.is_valid:
+                                    edges = []
+                                    for vert in edge.verts:
+                                        vert_edge = matrix_world * vert.co
+                                        edges.append((vert_edge[
+                                                          0] + face.normal.x * get_offset(
+                                            obj),
+                                                      vert_edge[
+                                                          1] + face.normal.y * get_offset(
+                                                          obj),
+                                                      vert_edge[
+                                                          2] + face.normal.z * get_offset(
+                                                          obj))
+                                                     )
+                                    glColor3f(*prefs.ngons_color[:3])
+                                    glBegin(GL_LINES)
+                                    draw_poly(edges)
+                                    glEnd()
 
                 glDisable(GL_BLEND)
                 glColor4f(0.0, 0.0, 0.0, 1.0)
